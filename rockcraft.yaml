@@ -1,0 +1,44 @@
+name: ueransim
+base: ubuntu@22.04
+build-base: ubuntu@22.04
+version: '3.2.6'
+summary: Ali Güngör's UE and RAN Simulator
+description: UERANSIM
+license: Apache-2.0
+platforms:
+  amd64:
+
+parts:
+  ueransim:
+    plugin: nil
+    source: https://github.com/aligungr/UERANSIM.git
+    source-tag: v3.2.6
+    source-type: git
+    build-packages:
+      - cmake
+      - gcc
+      - g++
+      - iproute2
+      - libsctp-dev
+      - lksctp-tools
+      - make
+    stage-packages:
+      - apt
+      - bash
+      - coreutils
+      - ethtool
+      - libsctp1
+      - iperf
+      - iproute2
+      - iptables
+      - iputils-ping
+      - procps
+      - tcpdump
+    organize:
+      bin/cmd: build/nr-gnb
+
+    override-build: |
+      CMAKE_BUILD_PARALLEL_LEVEL=`nproc` make
+      cp cmake-build-release/nr-cli $CRAFT_PART_INSTALL/bin/nr-cli
+      cp cmake-build-release/nr-gnb $CRAFT_PART_INSTALL/bin/nr-gnb
+      cp cmake-build-release/nr-ue $CRAFT_PART_INSTALL/bin/nr-ue
